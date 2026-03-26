@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuesta de Satisfacción — Escapada Sierra de los Padres</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f0e8;
+      --paper: #fdfaf4;
+      --ink: #1a1714;
+      --muted: #7a7068;
+      --accent: #c8490a;
+      --accent-light: #f0e0d6;
+      --border: #d4cdc3;
+      --stamp: #c8490a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(200,73,10,0.04) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b0a898' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .header-badge {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 14px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .header h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .header-sub {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+      margin-top: 12px;
+    }
+
+    .stamp {
+      position: absolute;
+      top: -8px;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      border: 3px solid var(--stamp);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--stamp);
+      font-family: 'DM Mono', monospace;
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.5;
+      transform: rotate(12deg);
+      opacity: 0.75;
+    }
+
+    .stamp strong {
+      font-size: 16px;
+      display: block;
+      line-height: 1;
+      margin: 2px 0;
+    }
+
+    /* INTRO BOX */
+    .intro-box {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 20px 24px;
+      margin-bottom: 40px;
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .intro-box strong { color: var(--ink); }
+
+    /* FORM */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .question-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      position: relative;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .question-card:focus-within::before {
+      opacity: 1;
+    }
+
+    .question-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .question-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .question-hint {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 18px;
+      font-style: italic;
+    }
+
+    /* TEXT INPUT */
+    textarea, input[type="text"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 0;
+      min-height: 80px;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    textarea::placeholder, input[type="text"]::placeholder {
+      color: #b8b0a5;
+      font-style: italic;
+    }
+
+    /* NUMERIC SCALE */
+    .scale-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .scale-container input[type="radio"] { display: none; }
+
+    .scale-container label {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .scale-container input[type="radio"]:checked + label {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .scale-container label:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* TOOLTIP ON EXTREME BUTTONS */
+    .scale-container {
+      position: relative;
+    }
+
+    .scale-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: var(--bg);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 6px 10px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+
+    .scale-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--ink);
+    }
+
+    .scale-tooltip.visible {
+      opacity: 1;
+    }
+
+    /* STAR RATING */
+    .stars-container {
+      display: flex;
+      gap: 6px;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+
+    .stars-container input[type="radio"] { display: none; }
+
+    .stars-container label {
+      font-size: 34px;
+      cursor: pointer;
+      color: var(--border);
+      transition: color 0.1s, transform 0.1s;
+      line-height: 1;
+    }
+
+    .stars-container input[type="radio"]:checked ~ label,
+    .stars-container label:hover,
+    .stars-container label:hover ~ label {
+      color: #d4850a;
+    }
+
+    .stars-container label:active {
+      transform: scale(1.2);
+    }
+
+    /* SUBMIT */
+    .submit-section {
+      text-align: center;
+      padding: 20px 0;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .submit-btn {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 16px 48px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .submit-btn:hover::after {
+      transform: translateX(0);
+    }
+
+    .submit-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .submit-disclaimer {
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* SUCCESS STATE */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .success-screen.visible { display: block; }
+
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .success-screen h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .success-screen p {
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .invite-card {
+      margin-top: 36px;
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      animation: fadeUp 0.7s 0.4s ease both;
+    }
+
+    .invite-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .invite-text {
+      font-family: 'Playfair Display', serif !important;
+      font-size: 20px !important;
+      font-style: italic;
+      color: var(--ink) !important;
+      line-height: 1.6 !important;
+    }
+      margin-top: 36px;
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      animation: fadeUp 0.7s 0.4s ease both;
+      opacity: 0;
+      animation-fill-mode: both;
+    }
+
+    .invite-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .invite-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--ink) !important;
+      line-height: 1.6;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .question-card:nth-child(1) { animation-delay: 0.1s; }
+    .question-card:nth-child(2) { animation-delay: 0.15s; }
+    .question-card:nth-child(3) { animation-delay: 0.2s; }
+    .question-card:nth-child(4) { animation-delay: 0.25s; }
+    .question-card:nth-child(5) { animation-delay: 0.3s; }
+    .question-card:nth-child(6) { animation-delay: 0.35s; }
+    .question-card:nth-child(7) { animation-delay: 0.4s; }
+    .question-card:nth-child(8) { animation-delay: 0.45s; }
+    .question-card:nth-child(9) { animation-delay: 0.5s; }
+    .question-card:nth-child(10) { animation-delay: 0.55s; }
+
+    @media (max-width: 480px) {
+      .question-card { padding: 22px 20px; }
+      .stamp { display: none; }
+      .scale-container label { width: 38px; height: 38px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="stamp">
+        <span>REF.</span>
+        <strong>2025</strong>
+        <span>OFICIALMENTE</span>
+        <span>INCALIFICABLE</span>
+      </div>
+      <div class="header-badge">Formulario Oficial N° 001 — Uso Interno</div>
+      <h1>Encuesta de Satisfacción<br/><em>Escapada Sierra de los Padres</em></h1>
+      <p class="header-sub">Período evaluado: fin de semana reciente · Participante: Salomé · Proveedor del servicio: Juan Cruz</p>
+    </div>
+
+    <div class="intro-box">
+      <strong>Estimada usuaria:</strong><br/>
+      Este formulario fue elaborado con fines exclusivamente científicos y de mejora continua del servicio.
+      Sus respuestas serán procesadas con total seriedad por nuestro equipo de analistas
+      (compuesto por una sola persona). La confidencialidad está garantizada, salvo que sean
+      demasiado halagadoras, en cuyo caso se enmarcarán y colgarán en la pared.
+    </div>
+
+    <form id="survey-form">
+
+      <!-- Q1: Manejo -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 01 / 10</div>
+        <div class="question-label">Calidad del servicio de conducción</div>
+        <div class="question-hint">Evaluá el desempeño al volante. Se agradece objetividad. Se tolera mentira piadosa.</div>
+        <div class="scale-container">
+          <input type="radio" name="q1" id="q1-10" value="10"><label for="q1-10" class="scale-extreme" data-tip="Michael Schumacher nivel">10</label>
+          <input type="radio" name="q1" id="q1-9" value="9"><label for="q1-9">9</label>
+          <input type="radio" name="q1" id="q1-8" value="8"><label for="q1-8">8</label>
+          <input type="radio" name="q1" id="q1-7" value="7"><label for="q1-7">7</label>
+          <input type="radio" name="q1" id="q1-6" value="6"><label for="q1-6">6</label>
+          <input type="radio" name="q1" id="q1-5" value="5"><label for="q1-5">5</label>
+          <input type="radio" name="q1" id="q1-4" value="4"><label for="q1-4">4</label>
+          <input type="radio" name="q1" id="q1-3" value="3"><label for="q1-3">3</label>
+          <input type="radio" name="q1" id="q1-2" value="2"><label for="q1-2">2</label>
+          <input type="radio" name="q1" id="q1-1" value="1"><label for="q1-1" class="scale-extreme" data-tip="Uber habría sido mejor">1</label>
+          <div class="scale-tooltip" id="tooltip-q1"></div>
+        </div>
+      </div>
+
+      <!-- Q2: Atención humana -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 02 / 10</div>
+        <div class="question-label">Calidad de la atención humana recibida</div>
+        <div class="question-hint">Considerá: amabilidad, escucha activa, presencia, y otras cualidades difícilmente verificables.</div>
+        <div class="stars-container" id="q2-stars">
+          <input type="radio" name="q2" id="q2-5" value="5"><label for="q2-5">★</label>
+          <input type="radio" name="q2" id="q2-4" value="4"><label for="q2-4">★</label>
+          <input type="radio" name="q2" id="q2-3" value="3"><label for="q2-3">★</label>
+          <input type="radio" name="q2" id="q2-2" value="2"><label for="q2-2">★</label>
+          <input type="radio" name="q2" id="q2-1" value="1"><label for="q2-1">★</label>
+        </div>
+      </div>
+
+      <!-- Q3: Charlas -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 03 / 10</div>
+        <div class="question-label">¿Qué temas de conversación te resultaron más interesantes?</div>
+        <div class="question-hint">Texto libre. No hay respuesta incorrecta, salvo "ninguno".</div>
+        <textarea name="q3" placeholder="Escribí libremente. Incluso si fue sobre el precio de los fideos, se toma nota."></textarea>
+      </div>
+
+      <!-- Q4: Culinario general -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 04 / 09</div>
+        <div class="question-label">Calidad culinaria general — Cena & Desayuno</div>
+        <div class="question-hint">Evaluación conjunta de ambas experiencias gastronómicas. Se pondera por igual. No hay excusas.</div>
+        <div class="scale-container">
+          <input type="radio" name="q4" id="q4-10" value="10"><label for="q4-10" class="scale-extreme" data-tip="Experiencia Michelin">10</label>
+          <input type="radio" name="q4" id="q4-9" value="9"><label for="q4-9">9</label>
+          <input type="radio" name="q4" id="q4-8" value="8"><label for="q4-8">8</label>
+          <input type="radio" name="q4" id="q4-7" value="7"><label for="q4-7">7</label>
+          <input type="radio" name="q4" id="q4-6" value="6"><label for="q4-6">6</label>
+          <input type="radio" name="q4" id="q4-5" value="5"><label for="q4-5">5</label>
+          <input type="radio" name="q4" id="q4-4" value="4"><label for="q4-4">4</label>
+          <input type="radio" name="q4" id="q4-3" value="3"><label for="q4-3">3</label>
+          <input type="radio" name="q4" id="q4-2" value="2"><label for="q4-2">2</label>
+          <input type="radio" name="q4" id="q4-1" value="1"><label for="q4-1" class="scale-extreme" data-tip="Comible, al menos">1</label>
+          <div class="scale-tooltip" id="tooltip-q4"></div>
+        </div>
+      </div>
+
+      <!-- Q5: Lugar -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 05 / 09</div>
+        <div class="question-label">¿Te gustó la elección del destino?</div>
+        <div class="question-hint">Sierra de los Padres. Seleccionado tras un exhaustivo proceso de "se me ocurrió".</div>
+        <div class="scale-container">
+          <input type="radio" name="q6" id="q6-10" value="10"><label for="q6-10" class="scale-extreme" data-tip="Destino del año">10</label>
+          <input type="radio" name="q6" id="q6-9" value="9"><label for="q6-9">9</label>
+          <input type="radio" name="q6" id="q6-8" value="8"><label for="q6-8">8</label>
+          <input type="radio" name="q6" id="q6-7" value="7"><label for="q6-7">7</label>
+          <input type="radio" name="q6" id="q6-6" value="6"><label for="q6-6">6</label>
+          <input type="radio" name="q6" id="q6-5" value="5"><label for="q6-5">5</label>
+          <input type="radio" name="q6" id="q6-4" value="4"><label for="q6-4">4</label>
+          <input type="radio" name="q6" id="q6-3" value="3"><label for="q6-3">3</label>
+          <input type="radio" name="q6" id="q6-2" value="2"><label for="q6-2">2</label>
+          <input type="radio" name="q6" id="q6-1" value="1"><label for="q6-1" class="scale-extreme" data-tip="Casi prefería quedarse en casa">1</label>
+          <div class="scale-tooltip" id="tooltip-q6"></div>
+        </div>
+      </div>
+
+      <!-- Q6: Repetiría -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 06 / 09</div>
+        <div class="question-label">Probabilidad de repetir una salida así conmigo</div>
+        <div class="question-hint">Esta pregunta es totalmente objetiva y no tiene ninguna carga emocional. Para nada.</div>
+        <div class="stars-container">
+          <input type="radio" name="q7" id="q7-5" value="5"><label for="q7-5">★</label>
+          <input type="radio" name="q7" id="q7-4" value="4"><label for="q7-4">★</label>
+          <input type="radio" name="q7" id="q7-3" value="3"><label for="q7-3">★</label>
+          <input type="radio" name="q7" id="q7-2" value="2"><label for="q7-2">★</label>
+          <input type="radio" name="q7" id="q7-1" value="1"><label for="q7-1">★</label>
+        </div>
+      </div>
+
+      <!-- Q7: Sentimientos -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 07 / 09</div>
+        <div class="question-label">Describí tus sentimientos: qué sentiste y qué sentís sobre el viaje</div>
+        <div class="question-hint">Campo de texto libre. Sin límite máximo. Con límite mínimo de dignidad narrativa.</div>
+        <textarea name="q_feelings" id="q-feelings" placeholder="Empezá a escribir. No te frenes." style="min-height: 110px;"></textarea>
+        <div id="feelings-warning" style="
+          display: none;
+          margin-top: 10px;
+          font-family: 'DM Mono', monospace;
+          font-size: 12px;
+          color: var(--accent);
+          font-weight: 500;
+          letter-spacing: 0.04em;
+        ">⚠ DALE, NO ESCATIMES EN PALABRAS. vos podés.</div>
+      </div>
+
+      <!-- Q8: Recomendaciones próxima escapada -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 08 / 09</div>
+        <div class="question-label">Sugerencias para la próxima escapada</div>
+        <div class="question-hint">Juegos, actividades, lugares, alimentos, o exigencias irrazonables. Todo se considera.</div>
+        <textarea name="q8" placeholder="Ej: quiero que haya jacuzzi, juegos de mesa, y que no llueva. Tomo nota de todo."></textarea>
+      </div>
+
+      <!-- Q9: Puntaje global -->
+      <div class="question-card">
+        <div class="question-number">Pregunta 09 / 09 — Evaluación Final</div>
+        <div class="question-label">Puntaje global de la experiencia</div>
+        <div class="question-hint">Evaluación final e inapelable. Considerá la experiencia en su totalidad.</div>
+        <div class="scale-container">
+          <input type="radio" name="q10" id="q10-10" value="10"><label for="q10-10" class="scale-extreme" data-tip="Experiencia irrepetible">10</label>
+          <input type="radio" name="q10" id="q10-9" value="9"><label for="q10-9">9</label>
+          <input type="radio" name="q10" id="q10-8" value="8"><label for="q10-8">8</label>
+          <input type="radio" name="q10" id="q10-7" value="7"><label for="q10-7">7</label>
+          <input type="radio" name="q10" id="q10-6" value="6"><label for="q10-6">6</label>
+          <input type="radio" name="q10" id="q10-5" value="5"><label for="q10-5">5</label>
+          <input type="radio" name="q10" id="q10-4" value="4"><label for="q10-4">4</label>
+          <input type="radio" name="q10" id="q10-3" value="3"><label for="q10-3">3</label>
+          <input type="radio" name="q10" id="q10-2" value="2"><label for="q10-2">2</label>
+          <input type="radio" name="q10" id="q10-1" value="1"><label for="q10-1" class="scale-extreme" data-tip="Trauma superado">1</label>
+          <div class="scale-tooltip" id="tooltip-q10"></div>
+        </div>
+      </div>
+
+      <div class="submit-section">
+        <button type="submit" class="submit-btn"><span>Enviar evaluación oficial</span></button>
+        <p class="submit-disclaimer">Al enviar este formulario confirmás que tus respuestas son verídicas o, al menos, bien intencionadas.</p>
+      </div>
+
+    </form>
+
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">📋</div>
+      <h2>Respuestas recibidas con total seriedad.</h2>
+      <p>
+        Gracias por completar este formulario.<br/>
+        Sus respuestas han sido procesadas, analizadas,<br/>
+        y archivadas en la carpeta "Cosas que me importan mucho".<br/><br/>
+        <strong>Se le notificará sobre mejoras en el servicio.</strong>
+      </p>
+      <div class="invite-card">
+        <div class="invite-icon">🗓️</div>
+        <p class="invite-text">te invito el viernes 03/04 a un plan sorpresa…<br/>espero estes lista&nbsp;☺️</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Tooltip logic for extreme scale buttons
+    document.querySelectorAll('.scale-extreme').forEach(label => {
+      const tip = label.dataset.tip;
+      const container = label.closest('.scale-container');
+      const tooltip = container.querySelector('.scale-tooltip');
+      if (!tooltip) return;
+
+      let hideTimer;
+
+      function showTooltip() {
+        clearTimeout(hideTimer);
+        // Position tooltip above this label
+        const labelRect = label.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        tooltip.textContent = tip;
+        tooltip.style.left = (labelRect.left - containerRect.left + label.offsetWidth / 2) + 'px';
+        tooltip.classList.add('visible');
+      }
+
+      function hideTooltip() {
+        hideTimer = setTimeout(() => tooltip.classList.remove('visible'), 1200);
+      }
+
+      // Desktop
+      label.addEventListener('mouseenter', showTooltip);
+      label.addEventListener('mouseleave', hideTooltip);
+      // Mobile tap
+      label.addEventListener('click', () => { showTooltip(); hideTooltip(); });
+    });
+
+    // Feelings field: warn if less than 70 chars on blur
+    const feelingsField = document.getElementById('q-feelings');
+    const feelingsWarning = document.getElementById('feelings-warning');
+    if (feelingsField) {
+      feelingsField.addEventListener('blur', () => {
+        if (feelingsField.value.trim().length < 70) {
+          feelingsWarning.style.display = 'block';
+        } else {
+          feelingsWarning.style.display = 'none';
+        }
+      });
+      feelingsField.addEventListener('input', () => {
+        if (feelingsField.value.trim().length >= 70) {
+          feelingsWarning.style.display = 'none';
+        }
+      });
+    }
+
+    // Submit
+    document.getElementById('survey-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Validate feelings field (Q7) — must be 70+ chars
+      const feelings = document.getElementById('q-feelings');
+      const warning = document.getElementById('feelings-warning');
+      if (feelings.value.trim().length < 70) {
+        warning.style.display = 'block';
+        feelings.focus();
+        feelings.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        feelings.style.borderColor = 'var(--accent)';
+        setTimeout(() => feelings.style.borderColor = '', 2000);
+        return;
+      }
+
+      this.style.display = 'none';
+      document.getElementById('success-screen').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
